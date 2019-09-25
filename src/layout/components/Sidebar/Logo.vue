@@ -1,13 +1,16 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+  <div class="sidebar-logo-container leading-none" :class="{'collapse leading-tight':collapse}" style="background-color:#384765">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" src="./logo.png" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
+        <div class="py-3 leading-tight">
+          <img src="./logo.png" class="sidebar-logo h-6 mx-auto">
+        </div>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" src="./logo.png" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <div class="flex py-3">
+          <img v-if="logo" src="./logo.png" class="mx-3 h-6">
+          <h1 class="sidebar-title text-gray-200 ml-2 text-sm" style="line-height: 1.625rem">{{ title }} </h1>
+        </div>
       </router-link>
     </transition>
   </div>
@@ -24,7 +27,7 @@ export default {
   data() {
     return {
       title: 'InsightRx',
-      logo: 'test.png'
+      logo: true
       // logo: '/assets/404_images/404_cloud.png'
     }
   }
@@ -42,40 +45,40 @@ export default {
 }
 
 .sidebar-logo-container {
-  position: relative;
-  width: 100%;
-  height: 50px;
-  line-height: 50px;
-  background: #384765;
-  text-align: center;
-  overflow: hidden;
+  // position: relative;
+  // width: 100%;
+  // height: 50px;
+  // line-height: 50px;
+  // background: #384765;
+  // text-align: center;
+  // overflow: hidden;
 
   & .sidebar-logo-link {
-    height: 100%;
-    width: 100%;
+    // height: 100%;
+    // width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
-      vertical-align: middle;
-      margin-right: 12px;
+      // width: 32px;
+      // height: 32px;
+      // vertical-align: middle;
+      // margin-right: 12px;
     }
 
     & .sidebar-title {
-      display: inline-block;
-      margin: 0;
-      color: #fff;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-      vertical-align: middle;
+      // display: inline-block;
+      // margin: 0;
+      // color: #fff;
+      // font-weight: 600;
+      // line-height: 50px;
+      // font-size: 14px;
+      // font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      // vertical-align: middle;
     }
   }
 
   &.collapse {
     .sidebar-logo {
-      margin-right: 0px;
+      // margin-right: 0px;
     }
   }
 }

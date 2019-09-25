@@ -1,8 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
-    <!-- <github-corner class="github-corner" /> -->
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+    <el-row class="bg-white px-4 pt-4 mb-8">
       <line-chart :chart-data="lineChartData" />
     </el-row>
     <el-row :gutter="32">
@@ -94,15 +93,9 @@ export default {
 <style lang="scss" scoped>
 .dashboard-editor-container {
   padding: 32px;
-  background-color: rgb(240, 242, 245);
+  background-color: #F6F9FB;
   position: relative;
 
-  .github-corner {
-    position: absolute;
-    top: 0px;
-    border: 0;
-    right: 0;
-  }
 
   .chart-wrapper {
     background: #fff;
