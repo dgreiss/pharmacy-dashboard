@@ -1,5 +1,5 @@
 <template>
-  <div class="chart w-full" ref="chart" />
+  <div class="chart w-full mx-auto" ref="chart" />
 </template>
 <script>
 import * as d3 from 'd3';
@@ -21,112 +21,33 @@ export default {
 
     }
   },
-  mounted() {},
   watch: {
     chartData: function() {
       const margin = { top: 20, right: 20, bottom: 30, left: 60 };
       const w = this.$refs.chart.offsetWidth;
       const h = 500;
 
+      // Parse Data
       const data = this.chartData;
       let parsed = this.applySchema(data);
+      // Scales
       const xScale = this.xScale(parsed, w, margin);
       const yScale = this.yScale(parsed, h, margin);
-
-
-      // const xScale = d3.scaleTime()
-      //   .domain(d3.extent(parsed, function(d) { return d.ds }))
-      //   .range([0, w - margin.left - margin.right]);
-
-      // const yScale = d3.scaleLinear()
-      //   .domain([d3.min(parsed, function(d) { return d.yhat_lower }),
-      //     d3.max(parsed, function(d) { return d.yhat_upper; })
-      //   ])
-      //   .range([h - margin.bottom - margin.top, 0])
-      //   .nice();
-
-      const xAxis = d3.axisBottom()
-        .scale(xScale)
-        .tickFormat(d3.timeFormat("%Y-%m-%d"));
-
-      const yAxis = d3.axisLeft()
-        .scale(yScale)
-        .tickFormat(function(d) { return "$" + d3.format(".2s")(d) });
-
-      const yhat = d3.line()
-        .x(function(d) { return xScale(d.ds) })
-        .y(function(d) { return yScale(d.yhat) });
-
-      const yhat_upper = d3.line()
-        .x(function(d) { return xScale(d.ds) })
-        .y(function(d) { return yScale(d.yhat_upper) });
-
-      const yhat_lower = d3.line()
-        .x(function(d) { return xScale(d.ds) })
-        .y(function(d) { return yScale(d.yhat_lower) });
-
-      // Create SVG
-      let svg = d3.select(".chart")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      // Draw yhat
-      let yhat_path = svg.append("path")
-        .datum(parsed)
-        .attr("d", yhat)
-        .attr("fill", "none")
-        .attr("stroke", "blue");
-      var totalLength = yhat_path.node().getTotalLength();
-
-      yhat_path
-        .attr("stroke-dasharray", totalLength + " " + totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition()
-        .duration(4000)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
-
-      // Draw yhat_upper
-      svg.append("path")
-        .datum(parsed)
-        .attr("d", yhat_upper)
-        .attr("fill", "none")
-        .attr("stroke", "red");
-
-      // Draw yhat_lower
-      svg.append("path")
-        .datum(parsed)
-        .attr("d", yhat_lower)
-        .attr("fill", "none")
-        .attr("stroke", "green");
-
-      //Draw Axes
-      svg.append("g")
-        .attr("transform", "translate(0," + (h - margin.top - margin.bottom) + ")")
-        .call(xAxis);
-
-      svg.append("g")
-        .call(yAxis);
-
-      // function make_x_gridlines() {
-      // return d3.axisBottom(xAxis).ticks(8)
-      // };
-
-      // function make_y_gridlines() {
-      // return d3.axisLeft(y).ticks(5)
-      // };
-      // svg.append("g")
-      // .attr("class", "grid")
-      // .attr("transform", "translate(0," + h + ")")
-      // .style("stroke-dasharray", ("3,3"))
-      // .call(make_x_gridlines()
-      // // .tickSize(-h)
-      // .tickFormat("")
-      // )
-
+      // Axes
+      const xAxis = this.xAxis(xScale);
+      const yAxis = this.yAxis(yScale);
+      // yhat line
+      const yhat = this.yhat(xScale, yScale);
+      // Draw Graph
+      let svg = this.createSVG(w, h, margin);
+      let yhat_path = this.drawYhat(svg, parsed, yhat);
+      let make_y_gridlines = this.make_y_gridlines(yScale);
+      let make_x_gridlines = this.make_x_gridlines(xScale);
+      // Draw independent graph components
+      this.drawAxes(svg, h, margin, xAxis, yAxis);
+      this.animate(yhat_path);
+      this.draw_y_gridlines(svg, make_y_gridlines, w, margin);
+      this.draw_x_gridlines(svg, make_x_gridlines, h, margin);
 
     }
   },
@@ -145,25 +66,97 @@ export default {
       return data;
     },
     xScale: function(data, w, margin) {
-      const xScale = d3.scaleTime()
+      return d3.scaleTime()
         .domain(d3.extent(data, function(d) { return d.ds }))
         .range([0, w - margin.left - margin.right]);
-      return xScale;
     },
     yScale: function(data, h, margin) {
-      const yScale = d3.scaleLinear()
-        .domain([d3.min(data, function(d) { return d.yhat_lower }),
-          d3.max(data, function(d) { return d.yhat_upper; })
-        ])
+      return d3.scaleLinear()
+        .domain(d3.extent(data, function(d) { return d.yhat }))
         .range([h - margin.bottom - margin.top, 0])
         .nice();
-      return yScale;
-    }
+    },
+    xAxis: function(xScale) {
+      return d3.axisBottom()
+        .scale(xScale)
+        .tickFormat(d3.timeFormat("%Y-%m-%d"));
+    },
+    yAxis: function(yScale) {
+      return d3.axisLeft()
+        .scale(yScale)
+        .tickFormat(function(d) { return "$" + d3.format(".2s")(d) });
+    },
+    yhat: function(xScale, yScale) {
+      return d3.line()
+        .x(function(d) { return xScale(d.ds) })
+        .y(function(d) { return yScale(d.yhat) });
+    },
+    createSVG: function(w, h, margin) {
+      return d3.select(".chart")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    },
+    drawYhat: function(svg, data, yhat) {
+      return svg.append("path")
+        .datum(data)
+        .attr("d", yhat)
+        .attr("fill", "none")
+        .attr("stroke", "blue");
+    },
+    drawAxes: function(svg, h, margin, xAxis, yAxis) {
+      // Draw x Axis
+      svg.append("g")
+        .attr("transform", "translate(0," + (h - margin.top - margin.bottom) + ")")
+        .call(xAxis);
+
+      // Dray y Axis
+      svg.append("g")
+        .call(yAxis);
+    },
+    animate: function(path) {
+      let totalLength = path.node().getTotalLength();
+      return path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(4000)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+    },
+    make_y_gridlines: function(yScale) {
+      return d3.axisLeft(yScale)
+        .ticks(5);
+    },
+    draw_y_gridlines: function(svg, make_y_gridlines, w, margin) {
+      return svg.append("g")
+        .attr("class", "grid")
+        .call(make_y_gridlines
+          .tickSize(-(w - margin.left - margin.right))
+          .tickFormat("")
+        );
+    },
+    make_x_gridlines: function(xScale) {
+      return d3.axisBottom(xScale)
+        .ticks(5);
+    },
+    draw_x_gridlines: function(svg, make_x_gridlines, h, margin) {
+      return svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + (h - margin.bottom - margin.top) + ")")
+        .call(make_x_gridlines
+          .tickSize(-(h - margin.bottom - margin.top))
+          .tickFormat("")
+        );
+    },
+
   }
 }
 
 </script>
-<style scoped>
+<style>
 .grid line {
   stroke: lightgrey;
   stroke-opacity: 0.6;

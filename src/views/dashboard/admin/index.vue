@@ -30,6 +30,7 @@
 </template>
 <script>
 import * as d3 from 'd3';
+import json from './data.json';
 
 import PanelGroup from './components/PanelGroup';
 import LineChart from './components/LineChart';
@@ -37,25 +38,6 @@ import RaddarChart from './components/RaddarChart';
 import PieChart from './components/PieChart';
 import BarChart from './components/BarChart';
 import TransactionTable from './components/TransactionTable';
-
-// const lineChartData = {
-//   newVisitis: {
-//     expectedData: [100, 120, 161, 134, 105, 160, 165],
-//     actualData: [120, 82, 91, 154, 162, 140, 145]
-//   },
-//   messages: {
-//     expectedData: [200, 192, 120, 144, 160, 130, 140],
-//     actualData: [180, 160, 151, 106, 145, 150, 130]
-//   },
-//   purchases: {
-//     expectedData: [80, 100, 121, 104, 105, 90, 100],
-//     actualData: [120, 90, 100, 138, 142, 130, 130]
-//   },
-//   shoppings: {
-//     expectedData: [130, 140, 141, 142, 145, 150, 160],
-//     actualData: [120, 82, 91, 154, 162, 140, 130]
-//   }
-// }
 
 export default {
   name: 'DashboardAdmin',
@@ -72,11 +54,14 @@ export default {
       data: [],
     }
   },
-  mounted() { this.fetchData(); },
+  mounted() {
+    this.data = json.fcst;
+    // this.fetchData();
+  },
   methods: {
     async fetchData() {
-      let response = await d3.json("http://localhost:4000/api");
-      this.data = response.fcst;
+      // let response = await d3.json("/data.json");
+      // this.data = response.fcst;
     },
   }
 }
