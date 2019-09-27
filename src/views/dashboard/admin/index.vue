@@ -30,7 +30,11 @@
 </template>
 <script>
 import * as d3 from 'd3';
+
 import json from './data.json';
+// import summary from './summary.json';
+// console.log(summary.summary[0]["avg_sales_mnth"]);
+
 
 import PanelGroup from './components/PanelGroup';
 import LineChart from './components/LineChart';
@@ -52,17 +56,18 @@ export default {
   data() {
     return {
       data: [],
+      // summary: []
     }
   },
   mounted() {
     this.data = json.fcst;
-    // this.fetchData();
+    // this.summary = summary.summary;
   },
   methods: {
-    async fetchData() {
-      // let response = await d3.json("/data.json");
-      // this.data = response.fcst;
-    },
+    // async fetchData() {
+    // let response = await d3.json("/data.json");
+    // this.data = response.fcst;
+    // },
   }
 }
 

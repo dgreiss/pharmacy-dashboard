@@ -1,70 +1,110 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Prescription Sales
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+  <div>
+    <div class="flex mb-2 ">
+      <div class="w-1/4 shadow-md bg-white rounded-sm mr-6 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Monthly Rx Count</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ anm }}</div>
         </div>
       </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Prescription C
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+      <div class="w-1/4 shadow-md bg-white rounded-sm mx-3 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Monthly Sales</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ asm }}</div>
         </div>
       </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Gross Profit
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+      <div class="w-1/4 shadow-md bg-white rounded-sm ml-6 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Monthly Gross Profit</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ agpm }}</div>
         </div>
       </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Gross Margin (%)
-          </div>
-          <count-to :start-val="0" :end-val="28" :duration="3600" class="card-panel-num" />
+      <div class="w-1/4 shadow-md bg-white rounded-sm ml-6 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Monthly Gross Margin</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ agmm }}</div>
         </div>
       </div>
-    </el-col>
-  </el-row>
+    </div>
+    <div class="flex mb-8 ">
+      <div class="w-1/4 shadow-md bg-white rounded-sm mr-6 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Annual Rx Count</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ any }}</div>
+        </div>
+      </div>
+      <div class="w-1/4 shadow-md bg-white rounded-sm mx-3 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Annual Sales</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ asy }}</div>
+        </div>
+      </div>
+      <div class="w-1/4 shadow-md bg-white rounded-sm ml-6 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Annual Gross Profit</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ agpy }}</div>
+        </div>
+      </div>
+      <div class="w-1/4 shadow-md bg-white rounded-sm ml-6 ">
+        <div class="w-5/6 mx-auto my-8">
+          <div class="text-lg font-sans text-gray-700">Annual Gross Margin</div>
+          <div class="text-2xl text-green-800 pt-1 font-bold">{{ agmy }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import CountTo from 'vue-count-to'
-
+import * as d3 from 'd3';
+import summary from '../summary.json';
+console.log(summary);
 export default {
-  components: {
-    CountTo
+  props: {
+    // summary: [],
+    // asm: null
   },
-  methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+  data() {
+    return {
+      summary: {}
     }
+
+  },
+  created() {
+    this.summary = summary.summary;
+  },
+  computed: {
+    asm: function() {
+      let asm = "$" + d3.format(".2s")(this.summary[0]["avg_sales_mnth"])
+      return asm;
+    },
+    agpm: function() {
+      let agpm = "$" + d3.format(".2s")(this.summary[0]["avg_gp_mnth"]);
+      return agpm;
+    },
+    agmm: function() {
+      let agmm = ((this.summary[0]["avg_gm_mnth"]) * 100).toFixed(1) + "%";
+      return agmm;
+    },
+    anm: function() {
+      let anm = (this.summary[0]["avg_n_mnth"]).toFixed(0);
+      return anm;
+    },
+    asy: function() {
+      let asy = "$" + d3.format(".2s")(this.summary[0]["avg_sales_yr"]);
+      return asy;
+    },
+    agpy: function() {
+      let agpy = "$" + d3.format(".2s")(this.summary[0]["avg_gp_yr"]);
+      return agpy;
+    },
+    agmy: function() {
+      let agmy = ((this.summary[0]["avg_gm_yr"]) * 100).toFixed(1) + "%";
+      return agmy;
+    },
+    any: function() {
+      let any = (this.summary[0]["avg_n_yr"]).toFixed(0);
+      return any;
+    },
   }
 }
 

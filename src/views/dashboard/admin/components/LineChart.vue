@@ -16,10 +16,6 @@ export default {
       type: Array,
       required: true
     },
-    width: {
-      type: Number,
-
-    }
   },
   watch: {
     chartData: function() {
@@ -48,6 +44,13 @@ export default {
       this.animate(yhat_path);
       this.draw_y_gridlines(svg, make_y_gridlines, w, margin);
       this.draw_x_gridlines(svg, make_x_gridlines, h, margin);
+
+      svg.append("text")
+        .attr("x", (w - margin.left) / 2)
+        .attr("y", margin.bottom / 2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Prescription Sales");
 
     }
   },
