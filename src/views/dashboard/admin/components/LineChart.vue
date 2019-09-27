@@ -19,7 +19,7 @@ export default {
   },
   watch: {
     chartData: function() {
-      const margin = { top: 20, right: 20, bottom: 30, left: 80 };
+      const margin = { top: 20, right: 20, bottom: 30, left: 60 };
       const w = this.$refs.chart.offsetWidth;
       const h = 500;
 
@@ -97,13 +97,14 @@ export default {
     createSVG: function(w, h, margin) {
       return d3.select(".chart")
         .classed("svg-container", true)
+        .style("padding-bottom", h / w * 100 + "%")
         // .append("svg")
         // .attr("preserveAspectRatio", "xMinYMin meet")
         // .attr("viewBox", "0 0 1200 500")
         // .classed("svg-content-responsive", true)
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 1300 500")
+        .attr("viewBox", "0 0 " + w + " " + h)
         // .attr("width", w)
         // .attr("height", h)
         .classed("svg-content-responsive", true)
@@ -178,7 +179,7 @@ export default {
   /*display: inline-block;*/
   position: relative;
   /*width: 100%;*/
-  padding-bottom: 40%;
+  /*padding-bottom: 40%;*/
   /* aspect ratio */
   /*vertical-align: top;*/
   overflow: hidden;
