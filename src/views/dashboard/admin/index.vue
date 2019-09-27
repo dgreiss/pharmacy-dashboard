@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-row class="bg-white px-4 pt-4 mb-8">
+    <div class="bg-white px-4 pt-4 mb-8">
       <line-chart :chart-data="data" />
-    </el-row>
+    </div>
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">

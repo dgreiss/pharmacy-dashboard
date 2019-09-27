@@ -19,7 +19,7 @@ export default {
   },
   watch: {
     chartData: function() {
-      const margin = { top: 20, right: 20, bottom: 30, left: 60 };
+      const margin = { top: 20, right: 20, bottom: 30, left: 80 };
       const w = this.$refs.chart.offsetWidth;
       const h = 500;
 
@@ -96,9 +96,17 @@ export default {
     },
     createSVG: function(w, h, margin) {
       return d3.select(".chart")
+        .classed("svg-container", true)
+        // .append("svg")
+        // .attr("preserveAspectRatio", "xMinYMin meet")
+        // .attr("viewBox", "0 0 1200 500")
+        // .classed("svg-content-responsive", true)
         .append("svg")
-        .attr("width", w)
-        .attr("height", h)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 1300 500")
+        // .attr("width", w)
+        // .attr("height", h)
+        .classed("svg-content-responsive", true)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     },
@@ -164,6 +172,23 @@ export default {
   stroke: lightgrey;
   stroke-opacity: 0.6;
   shape-rendering: crispEdges
+}
+
+.svg-container {
+  /*display: inline-block;*/
+  position: relative;
+  /*width: 100%;*/
+  padding-bottom: 40%;
+  /* aspect ratio */
+  /*vertical-align: top;*/
+  overflow: hidden;
+}
+
+.svg-content-responsive {
+  /*display: inline-block;*/
+  position: absolute;
+  /*top: 10px;*/
+  /*left: 0;*/
 }
 
 </style>
